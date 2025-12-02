@@ -1,10 +1,7 @@
-import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-)
+// Note: StrictMode removed because it's incompatible with long-running
+// async streams (it mounts/unmounts/remounts which interrupts the stream)
+createRoot(document.getElementById('root')!).render(<App />)

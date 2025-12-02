@@ -121,6 +121,10 @@ app.MapGet("/api/records/stream", async (AppDbContext dbContext, HttpContext con
 
     var cancellationToken = context.RequestAborted;
 
+    var delay = 1000;
+    var batchSizeToSimulateDelay = 1000;
+    var recordCount = 0;
+
     await foreach (var recordEntity in dbContext.Records
         .AsNoTracking()
         .OrderBy(r => r.Id)
@@ -133,6 +137,13 @@ app.MapGet("/api/records/stream", async (AppDbContext dbContext, HttpContext con
             Name: recordEntity.Name,
             Value: recordEntity.Value,
             CreatedAt: recordEntity.CreatedAt);
+
+        if(recordCount % batchSizeToSimulateDelay == 0)
+        {
+            await Task.Delay(delay, cancellationToken);
+        }
+        
+        recordCount++;
 
         var json = JsonSerializer.Serialize(record);
         await context.Response.WriteAsync(json + "\n", cancellationToken);

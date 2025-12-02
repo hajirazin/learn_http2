@@ -9,8 +9,8 @@ export interface RecordDto {
  * Streams records from the backend HTTP/2 NDJSON endpoint.
  * Yields records incrementally as they arrive over the network.
  */
-export async function* streamRecords(apiUrl: string): AsyncGenerator<RecordDto, void, unknown> {
-  const response = await fetch(apiUrl);
+export async function* streamRecords(apiUrl: string, signal?: AbortSignal): AsyncGenerator<RecordDto, void, unknown> {
+  const response = await fetch(apiUrl, { signal });
   
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);

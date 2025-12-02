@@ -52,3 +52,10 @@ CodeCoverage/
 *.VisualState.xml
 TestResult.xml
 nunit-*.xml
+
+# Environment Variables
+.env
+.env.local
+
+# Docker
+docker-compose.override.yml

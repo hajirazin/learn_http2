@@ -34,7 +34,7 @@ const columns: ColumnsType<RecordDto> = [
 ];
 
 function App() {
-  const [records, setRecords] = useState<RecordDto[]>([]);
+  const [records, setRecords] = useState<Set<RecordDto>>(new Set());
   const [status, setStatus] = useState<'connecting' | 'streaming' | 'completed' | 'error'>('connecting');
   const [errorMessage, setErrorMessage] = useState<string>('');
 
@@ -45,9 +45,11 @@ function App() {
         const apiUrl = 'https://localhost:5001/api/records/stream';
         
         setStatus('streaming');
+
+        setRecords(new Set());
         
         for await (const record of streamRecords(apiUrl)) {
-          setRecords(prev => [...prev, record]);
+          setRecords(prev => prev.add(record));
         }
         
         setStatus('completed');
@@ -66,9 +68,9 @@ function App() {
       case 'connecting':
         return '🔌 Connecting to server...';
       case 'streaming':
-        return `📡 Streaming... (${records.length.toLocaleString()} records received)`;
+        return `📡 Streaming... (${records.size.toLocaleString()} records received)`;
       case 'completed':
-        return `✅ Stream completed! (${records.length.toLocaleString()} total records)`;
+        return `✅ Stream completed! (${records.size.toLocaleString()} total records)`;
       case 'error':
         return `❌ Error: ${errorMessage}`;
     }
@@ -83,7 +85,7 @@ function App() {
       
       <Table
         columns={columns}
-        dataSource={records}
+        dataSource={Array.from(records)}
         rowKey="Id"
         pagination={{
           pageSize: 100,
